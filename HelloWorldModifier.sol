@@ -3,7 +3,6 @@ pragma solidity ^0.4.0;
 
 // Contrato
 contract HelloWorldContract {
-
     // Variables
     string word = 'Hello World';
     address owner;
@@ -23,7 +22,7 @@ contract HelloWorldContract {
         return 'You sucessfully changed the variable word';
     }
 
-        //Funcion Especial
+    //Funcion Especial
     modifier onlyOwner {
         if(owner != msg.sender) {
             throw;
