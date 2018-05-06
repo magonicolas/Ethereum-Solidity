@@ -6,7 +6,7 @@ contract Event {
     uint public tickets;
     string public description;
     string public website;
-    uint constant price = 1 ether;
+    uint constant price = 0.01 ether;
     mapping (address => uint) public purchasers;
     
     function Event(uint t, string _description, string _webstite) {
