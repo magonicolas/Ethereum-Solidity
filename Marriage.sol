@@ -11,7 +11,7 @@ contract Marriage {
 		uint id;
 		string agreements;
 		uint256 proposalDate;
-		uint256 acceptedDate;
+		uint256 answeredDate;
 		uint256 endedDate;
 		address proposer;
 		address proposed;
@@ -19,19 +19,21 @@ contract Marriage {
 		bool ended;
 	}
 
+	event MarriageStatus(string _msg, address _proposer, address _proposed, bool _accepted, uint256 _date);
+
 	mapping (uint => Marriage) public marriages;
 
 	function Marriage () {
 		
 	}	
 
-	function proposeMArriage(uint _id, string _agreements, address _proposed) payable {
+	function proposeMarriage(uint _id, string _agreements, address _proposed) payable {
 		
 		Marriage memory _marriage = Marriage({
 			id: _id,
 			agreements: _agreements,
 			proposalDate: block.timestamp,
-			acceptedDate: 0,
+			answeredDate: 0,
 			endedDate: 0,
 			proposer: msg.sender,
 			proposed: _proposed,
@@ -39,5 +41,24 @@ contract Marriage {
 			ended: false
 		});
 		marriages[_id] = _marriage;
+	}
+
+	function answerMarriage(uint _id, bool _accept) {
+		Marriage storage _marriage = marriages[_id];
+
+		require (_marriage.proposed == msg.sender);
+
+		_marriage.accepted = _accept;
+		_marriage.answeredDate = block.timestamp;
+		MarriageStatus('User has answered to Marriage proposal', _marriage.proposer, msg.sender, _accept, block.timestamp);
+	}
+
+	function endMarriage(uint _id) {
+		Marriage storage _marriage = marriages[_id];
+
+		require (_marriage.proposed == msg.sender || _marriage.proposer == msg.sender);
+
+		_marriage.ended = true;
+		_marriage.endedDate = block.timestamp;
 	}
 }
