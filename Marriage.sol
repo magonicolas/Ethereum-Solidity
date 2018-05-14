@@ -28,6 +28,8 @@ contract Marriage {
 	}	
 
 	function proposeMarriage(uint _id, string _agreements, address _proposed) payable {
+
+		// Verify ID doesnt exist
 		
 		Marriage memory _marriage = Marriage({
 			id: _id,
