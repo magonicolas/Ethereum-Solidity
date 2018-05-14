@@ -19,7 +19,7 @@ contract Marriage {
 		bool ended;
 	}
 
-	event MarriageStatus(string _msg, address _proposer, address _proposed, bool _accepted, uint256 _date);
+	event MarriageStatus(string _msg, address _proposer, address _proposed, bool _accepted, uint256 _date, bool _ended);
 
 	mapping (uint => Marriage) public marriages;
 
@@ -50,7 +50,7 @@ contract Marriage {
 
 		_marriage.accepted = _accept;
 		_marriage.answeredDate = block.timestamp;
-		MarriageStatus('User has answered to Marriage proposal', _marriage.proposer, msg.sender, _accept, block.timestamp);
+		MarriageStatus('User has answered to Marriage proposal', _marriage.proposer, msg.sender, _accept, block.timestamp, false);
 	}
 
 	function endMarriage(uint _id) {
@@ -60,5 +60,7 @@ contract Marriage {
 
 		_marriage.ended = true;
 		_marriage.endedDate = block.timestamp;
+
+		MarriageStatus('User has answered to Marriage proposal', _marriage.proposer, _marriage.proposed, _marriage.accepted, block.timestamp, true);
 	}
 }
