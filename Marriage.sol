@@ -3,7 +3,7 @@ pragma solidity ^0.4.23;
 /**
  * This contract is a love contract, we will offer marriage 
  and accept it or rejected on the ethereum blockchain.
- @autor: magonicolas
+ *@autor: magonicolas
  */
 contract Marriage {
 
@@ -27,9 +27,9 @@ contract Marriage {
 		
 	}	
 
-	function proposeMarriage(uint _id, string _agreements, address _proposed) payable {
+	function proposeMarriage(uint _id, string _agreements, address _proposed) {
 
-		// Verify ID doesnt exist
+		// Verify ID doesnt exist		
 		
 		Marriage memory _marriage = Marriage({
 			id: _id,
@@ -63,6 +63,6 @@ contract Marriage {
 		_marriage.ended = true;
 		_marriage.endedDate = block.timestamp;
 
-		MarriageStatus('User has answered to Marriage proposal', _marriage.proposer, _marriage.proposed, _marriage.accepted, block.timestamp, true);
+		MarriageStatus('Marriage Ended', _marriage.proposer, _marriage.proposed, _marriage.accepted, block.timestamp, true);
 	}
 }
