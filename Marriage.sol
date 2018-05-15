@@ -5,7 +5,7 @@ pragma solidity ^0.4.23;
  and accept it or rejected on the ethereum blockchain.
  *@autor: magonicolas
  */
-contract Marriage {
+contract MarriageContract {
 
 	struct Marriage {
 		uint id;
@@ -23,13 +23,13 @@ contract Marriage {
 
 	mapping (uint => Marriage) public marriages;
 
-	function Marriage () {
+	function MarriageContract () {
 		
 	}	
 
 	function proposeMarriage(uint _id, string _agreements, address _proposed) {
 
-		// Verify ID doesnt exist		
+		require (marriages[_id].proposalDate == 0);
 		
 		Marriage memory _marriage = Marriage({
 			id: _id,
