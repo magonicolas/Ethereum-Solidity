@@ -8,7 +8,6 @@ pragma solidity ^0.4.23;
 contract MarriageContract {
 
 	struct Marriage {
-		uint id;
 		string agreements;
 		uint256 proposalDate;
 		uint256 answeredDate;
@@ -21,19 +20,18 @@ contract MarriageContract {
 
 	event MarriageStatus(string _msg, address _proposer, address _proposed, bool _accepted, uint256 _date, bool _ended);
 
-	mapping (uint => Marriage) public marriages;
+	mapping (address => Marriage) public marriages;
 
 	function MarriageContract () {
 		
 	}	
 
-	function proposeMarriage(uint _id, string _agreements, address _proposed) {
+	function proposeMarriage(string _agreements, address _proposed) {
 
-		require (marriages[_id].proposalDate == 0);
+		require (marriages[msg.sender].proposalDate == 0 || marriages[msg.sender].ended);
 		
 		Marriage memory _marriage = Marriage({
-			id: _id,
-			agreements: _agreements,
+						agreements: _agreements,
 			proposalDate: block.timestamp,
 			answeredDate: 0,
 			endedDate: 0,
@@ -42,11 +40,12 @@ contract MarriageContract {
 			accepted: false,
 			ended: false
 		});
-		marriages[_id] = _marriage;
+		marriages[msg.sender] = _marriage;
+		marriages[_proposed] = _marriage;
 	}
 
-	function answerMarriage(uint _id, bool _accept) {
-		Marriage storage _marriage = marriages[_id];
+	function answerMarriage(bool _accept) {
+		Marriage storage _marriage = marriages[msg.sender];
 
 		require (_marriage.proposed == msg.sender);
 
@@ -55,14 +54,13 @@ contract MarriageContract {
 		MarriageStatus('User has answered to Marriage proposal', _marriage.proposer, msg.sender, _accept, block.timestamp, false);
 	}
 
-	function endMarriage(uint _id) {
-		Marriage storage _marriage = marriages[_id];
+	function endMarriage() {
+		Marriage storage _marriage = marriages[msg.sender];
 
 		require (_marriage.proposed == msg.sender || _marriage.proposer == msg.sender);
-
+		
 		_marriage.ended = true;
 		_marriage.endedDate = block.timestamp;
-
 		MarriageStatus('Marriage Ended', _marriage.proposer, _marriage.proposed, _marriage.accepted, block.timestamp, true);
 	}
 }
