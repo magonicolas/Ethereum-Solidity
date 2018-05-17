@@ -46,21 +46,29 @@ contract MarriageContract {
 
 	function answerMarriage(bool _accept) {
 		Marriage storage _marriage = marriages[msg.sender];
+		Marriage storage _marriageProposer = marriages[_marriage.proposer];
 
 		require (_marriage.proposed == msg.sender);
 
 		_marriage.accepted = _accept;
+		_marriageProposer.accepted = _accept;
+		
 		_marriage.answeredDate = block.timestamp;
+		_marriageProposer.answeredDate = block.timestamp;
 		MarriageStatus('User has answered to Marriage proposal', _marriage.proposer, msg.sender, _accept, block.timestamp, false);
 	}
 
 	function endMarriage() {
 		Marriage storage _marriage = marriages[msg.sender];
+		Marriage storage _marriageProposer = marriages[_marriage.proposer];
 
 		require (_marriage.proposed == msg.sender || _marriage.proposer == msg.sender);
 		
 		_marriage.ended = true;
+		_marriageProposer.ended = true;
+		
 		_marriage.endedDate = block.timestamp;
+		_marriageProposer.endedDate = block.timestamp;
 		MarriageStatus('Marriage Ended', _marriage.proposer, _marriage.proposed, _marriage.accepted, block.timestamp, true);
 	}
 }
