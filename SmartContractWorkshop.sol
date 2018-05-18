@@ -16,13 +16,16 @@ contract SmartContractWorkshop {
 	uint256 public ticketsSold;
 	uint256 public ticketsFaceToFaceSold;
 
+	string public eventWebsite;
+
 	mapping(address=>Person) public attendants;
 
 	address[] allAttendants;
 	address[] faceToFaceAttendants;
 
-	function SmartContractWorkshop () {
+	function SmartContractWorkshop (string _eventWebsite) {
 		owner = msg.sender;
+		eventWebsite = _eventWebsite;
 	}
 	
 
@@ -31,11 +34,12 @@ contract SmartContractWorkshop {
 		require (msg.value == currentPrice() && attendants[msg.sender].purchased == false);
 
 		if(_attendsOnline == false ) {
+			ticketsFaceToFaceSold++;
 
 			require (ticketsFaceToFaceSold <= faceToFaceLimit);
+
 			addAttendantAndTransfer(_name, _email, _attendsOnline);
 			faceToFaceAttendants.push(msg.sender);
-			ticketsFaceToFaceSold++;
 		} else {
 			addAttendantAndTransfer(_name, _email, _attendsOnline);
 		}
