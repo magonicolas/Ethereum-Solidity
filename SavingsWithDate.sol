@@ -9,8 +9,7 @@ contract Savings {
         _;
     }
 
-    function deposit(uint256 amount) public payable {
-        require(msg.value == amount);
+    function deposit() public payable {
     }
 
     function Savings(uint256 numberOfDays) public payable {
