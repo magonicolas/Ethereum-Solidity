@@ -13,10 +13,13 @@ contract SmartContractWorkshop {
 	uint256 priceIncrease = 0.001 ether;
 	address owner;
 	uint256 faceToFaceLimit = 30;
-	uint256 ticketsSold;
-	uint256 ticketsFaceToFaceSold;
+	uint256 public ticketsSold;
+	uint256 public ticketsFaceToFaceSold;
 
 	mapping(address=>Person) public attendants;
+
+	address[] allAttendants;
+	address[] faceToFaceAttendants;
 
 	function SmartContractWorkshop () {
 		owner = msg.sender;
@@ -25,19 +28,21 @@ contract SmartContractWorkshop {
 
 	function register(string _name, string _email, bool _attendsOnline) payable {
 
-		require (msg.value == currentPrice() && attendants[msg.sender].purchased == false)
+		require (msg.value == currentPrice() && attendants[msg.sender].purchased == false);
 
 		if(_attendsOnline == false ) {
 
-			require (ticketsFaceToFaceSold < 30);
+			require (ticketsFaceToFaceSold <= faceToFaceLimit);
 			addAttendantAndTransfer(_name, _email, _attendsOnline);
+			faceToFaceAttendants.push(msg.sender);
 			ticketsFaceToFaceSold++;
 		} else {
 			addAttendantAndTransfer(_name, _email, _attendsOnline);
 		}
+		allAttendants.push(msg.sender);
 	}
 
-	function addAttendantAndTransfer(string _name, string _email, bool _attendsOnline) {
+	function addAttendantAndTransfer(string _name, string _email, bool _attendsOnline) internal {
 				attendants[msg.sender] = Person({
 				name: _name,
 				email: _email,
@@ -47,6 +52,14 @@ contract SmartContractWorkshop {
 		ticketsSold++;
 		owner.transfer(this.balance);
 	}
+
+	function listAllAttendants() external view returns(address[]){
+        return allAttendants;
+    }
+
+    function listFaceToFaceAttendants() external view returns(address[]){
+        return faceToFaceAttendants;
+    }
 
 	function currentPrice() public view returns (uint256) {
         return baseprice + (ticketsSold * priceIncrease);
