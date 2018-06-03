@@ -12,7 +12,7 @@ contract SmartContractWorkshop {
 	uint256 baseprice = 0.03 ether;
 	uint256 priceIncrease = 0.001 ether;
 	address owner;
-	uint256 faceToFaceLimit = 30;
+	uint256 faceToFaceLimit = 24;
 	uint256 public ticketsSold;
 	uint256 public ticketsFaceToFaceSold;
 
