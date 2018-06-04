@@ -16,6 +16,8 @@ contract AuctionFactory {
 
 	mapping (uint => AuctionScheme) public auctions;
 
+	uint256[] public auctionIndexes;
+
 	address ceoAddress;
 
 	address public vaultAddress;
@@ -37,6 +39,8 @@ contract AuctionFactory {
 		auctions[_auctionId].duration = _duration;
 		auctions[_auctionId].increaseTime = _increaseTime;
 		auctions[_auctionId].timeCreated = block.timestamp;
+
+		auctionIndexes.push(_auctionId);
 	}
 
 	function bid(uint _auctionId) payable {
@@ -56,6 +60,10 @@ contract AuctionFactory {
 	// Verify existence of id to avoid collision
     function auctionExists( uint _auctionId) internal view returns(bool) {
         return auctions[_auctionId].isAuctionScheme;
+    }
+
+    function listAuctionIds() external view returns(uint256[]){
+        return auctionIndexes;
     }
 
 	// Set a new address for vault contract
