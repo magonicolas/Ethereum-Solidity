@@ -5,12 +5,13 @@ contract SmartContractWorkshop {
 	struct Person {
 		string name;
 		string email;
-		bool attendsOnline;
+		bool attendsInPerson;
 		bool purchased;
 	}
 
 	uint256 baseprice = 0.03 ether;
 	uint256 priceIncrease = 0.001 ether;
+	uint256 maxPrice = 0.1 ether;
 	address owner;
 	uint256 faceToFaceLimit = 24;
 	uint256 public ticketsSold;
@@ -23,34 +24,38 @@ contract SmartContractWorkshop {
 	address[] allAttendants;
 	address[] faceToFaceAttendants;
 
+	string[] allAttendantsEmail;
+	string[] faceToFaceAttendantsEmail;
+
 	function SmartContractWorkshop (string _eventWebsite) {
 		owner = msg.sender;
 		eventWebsite = _eventWebsite;
 	}
 	
 
-	function register(string _name, string _email, bool _attendsOnline) payable {
+	function register(string _name, string _email, bool _attendsInPerson) payable {
 
 		require (msg.value == currentPrice() && attendants[msg.sender].purchased == false);
 
-		if(_attendsOnline == false ) {
+		if(_attendsInPerson == true ) {
 			ticketsFaceToFaceSold++;
-
 			require (ticketsFaceToFaceSold <= faceToFaceLimit);
 
-			addAttendantAndTransfer(_name, _email, _attendsOnline);
+			addAttendantAndTransfer(_name, _email, _attendsInPerson);
 			faceToFaceAttendants.push(msg.sender);
+			faceToFaceAttendants.push(_email);
 		} else {
-			addAttendantAndTransfer(_name, _email, _attendsOnline);
+			addAttendantAndTransfer(_name, _email, _attendsInPerson);
 		}
 		allAttendants.push(msg.sender);
+		allAttendantsEmail.push(_email);
 	}
 
-	function addAttendantAndTransfer(string _name, string _email, bool _attendsOnline) internal {
+	function addAttendantAndTransfer(string _name, string _email, bool _attendsInPerson) internal {
 				attendants[msg.sender] = Person({
 				name: _name,
 				email: _email,
-				attendsOnline: _attendsOnline,
+				attendsInPerson: _attendsInPerson,
 				purchased: true
 		});
 		ticketsSold++;
@@ -65,8 +70,24 @@ contract SmartContractWorkshop {
         return faceToFaceAttendants;
     }
 
+    function listAllAttendantsEmail() external view returns(string[]){
+        return allAttendantsemail;
+    }
+
+    function listFaceToFaceAttendantsEmail() external view returns(string[]){
+        return faceToFaceAttendantsEmail;
+    }
+
+    function hasPurchased() public view returns (bool) {
+    	return attendants[msg.sender].purchased;
+    }
+
 	function currentPrice() public view returns (uint256) {
-        return baseprice + (ticketsSold * priceIncrease);
+		if(baseprice + (ticketsSold * priceIncrease) >= maxPrice) {
+			return maxPrice;
+		} else {
+			return baseprice + (ticketsSold * priceIncrease);
+		}
     }
 
     modifier onlyOwner() {

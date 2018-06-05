@@ -12,6 +12,8 @@ contract AuctionFactory {
 		uint duration;
 		uint increaseTime;
 		bool isAuctionScheme;
+		bool hasBeenSwaped;
+		bool canBeSwaped;
 	}
 
 	mapping (uint => AuctionScheme) public auctions;
@@ -55,6 +57,18 @@ contract AuctionFactory {
 	function endAuction(uint _auctionId) {
 		require((auctions[_auctionId].timeCreated + auctions[_auctionId].duration) > block.timestamp);
 		vaultAddress.transfer(auctions[_auctionId].price);
+	}
+
+	function swapAuction(uint _auctionId) {
+		require (auctions[_auctionId].canBeSwaped == true);
+		require((auctions[_auctionId].timeCreated + auctions[_auctionId].duration) > block.timestamp);
+		require(auctions[_auctionId].currentOwner == msg.sender);
+		auctions[_auctionId].hasBeenSwaped = true;
+	}
+
+	function enableSwap(uint _auctionId) onlyCEO {
+		require((auctions[_auctionId].timeCreated + auctions[_auctionId].duration) > block.timestamp);
+		auctions[_auctionId].canBeSwaped = true;
 	}
 
 	// Verify existence of id to avoid collision
